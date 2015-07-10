@@ -39,7 +39,7 @@
 
                     var clickData;
 
-                    while (target) {
+                    while (target && target.tagName) {
 
                         clickData =  target.getAttribute('data-click');
 

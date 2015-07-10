@@ -110,9 +110,12 @@
         ['debug', 'info', 'warning', 'error'],
         function (type) {
             exports[type] = function (data) {
-                data.logType = type;
-                data.pageUrl = exports.pageUrl;
-                WAT.send(exports.url, data);
+                var url = exports.url;
+                if (url) {
+                    data.logType = type;
+                    data.pageUrl = exports.pageUrl;
+                    WAT.send(url, data);
+                }
             };
         }
     );

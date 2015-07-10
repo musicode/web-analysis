@@ -52,12 +52,11 @@
          * onload 事件后调用
          */
         ready: function () {
+
             var timing = getTiming();
-            exports.data = {
+
+            var data = {
                 timing_navigationStart: timing.navigationStart,
-                timing_unloadEventEnd: timing.unloadEventEnd,
-                timing_redirectStart: timing.redirectStart,
-                timing_redirectEnd: timing.redirectEnd,
                 timing_fetchStart: timing.fetchStart,
                 timing_domainLookupStart: timing.domainLookupStart,
                 timing_domainLookupEnd: timing.domainLookupEnd,
@@ -73,8 +72,15 @@
                 timing_domComplete: timing.domComplete,
                 timing_loadEventStart: timing.loadEventStart,
                 timing_loadEventEnd: timing.loadEventEnd,
-                timing_firstPaint: timing.firstPaint
+                timing_firstPaint: timing.firstPaint || window.firstPaint
             };
+
+            WAT.extend(data, exports.data || {});
+
+            WAT.send(
+                exports.action,
+                data
+            );
         }
 
     };

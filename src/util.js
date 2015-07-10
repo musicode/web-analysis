@@ -96,6 +96,100 @@
     }
 
     /**
+     * 读取 cookie 值
+     *
+     * @inner
+     * @param {string} name
+     * @return {string}
+     */
+    function getCookie(name) {
+        var regex = new RegExp(name + '=([^;]+)(?:;|$)');
+        var match = document.cookie.match(regex);
+        return match ? decodeURIComponent(match[1]) : '';
+    }
+
+    /**
+     * 设置 cookie
+     *
+     * @inner
+     * @param {string} name
+     * @param {string} value
+     * @param {Object=} options
+     */
+    function setCookie(name, value, options) {
+
+        options = options || { };
+
+        var expires = options.expires;
+        if (expires == null) {
+            // 永不过期，2 到底
+            expires = new Date(2222, 2, 2);
+        }
+
+        var path = options.path;
+        if (path == null) {
+            // 保证网站全局可用
+            path = '/';
+        }
+
+        var domain = options.domain;
+        if (domain == null) {
+            // 保证网站全局可用
+            var terms = location.hostname.split('.');
+            if (terms.length > 2) {
+                terms.shift();
+            }
+            domain = terms.join('.');
+        }
+
+        document.cookie = [
+            encodeURIComponent(name), '=', encodeURIComponent(value),
+            ';expires=' + expires.toUTCString(),
+            ';path=' + path,
+            ';domain=' + domain,
+            options.secure ? ';secure' : ''
+        ].join('');
+    }
+
+    /**
+     * 生成四位十六进制随机数
+     *
+     * @inner
+     * @return {string}
+     */
+    function s4() {
+       return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+    }
+
+    /**
+     * 创建一个 guid
+     *
+     * @inner
+     * @return {string}
+     */
+    function guid() {
+        return [
+            s4() + s4(),
+            s4(),
+            s4(),
+            s4(),
+            s4() + s4() + s4()
+        ].join('-');
+    }
+
+    /**
+     * 创建完整 url
+     *
+     * @inner
+     * @param {string} host
+     * @param {string} path
+     * @return {string}
+     */
+    function toUrl(host, path) {
+        return location.protocol + '//' + host + path;
+    }
+
+    /**
      * 保持图片引用的数组
      *
      * @inner
@@ -112,21 +206,23 @@
      */
     var send = function (url, data) {
 
+        if (!url) {
+            return;
+        }
+
         var queryArr = [ ];
 
-        each(
-            data,
-            function (value, name) {
-                if (value !== null) {
-                    queryArr.push(
-                        name + '=' + encodeURIComponent(value)
-                    );
+        if (data) {
+            each(
+                data,
+                function (value, name) {
+                    if (value !== null) {
+                        queryArr.push(
+                            name + '=' + encodeURIComponent(value)
+                        );
+                    }
                 }
-            }
-        );
-
-        if (!queryArr.length) {
-            return;
+            );
         }
 
         var img = new Image();
@@ -157,6 +253,10 @@
         each: each,
         extend: extend,
         parseJSON: parseJSON,
+        getCookie: getCookie,
+        setCookie: setCookie,
+        guid: guid,
+        toUrl: toUrl,
         send: send
     };
 
