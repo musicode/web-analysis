@@ -57,6 +57,10 @@
                         }
                     }
 
+                    if (!list.length) {
+                        return;
+                    }
+
                     var data = { };
 
                     WAT.each(
